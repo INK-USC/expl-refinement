@@ -1,5 +1,7 @@
 # Matcher
 
+After collecting compositional explanations from human annotators, the *matcher* in our framework generalizes them in the target domain. This directory contains the matcher code (execute `main.py`), along with the lexicons for explanation parsing (see `data/`) and the compositional explanations we collected for 3 dataset pairs (see `annotation/`).
+
 ## Requirements
 
 For chunking, NER, etc:

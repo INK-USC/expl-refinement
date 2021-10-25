@@ -1,5 +1,7 @@
 # Learning with Explanation-Generalized Data
 
+This directory contains the code to train the source model or train with refinement advice (execute `run_model.py`), and also the code we used to generate post-hoc explanation heat-maps (execute `constituency_tree.py`).
+
 ## Requirements
 
 ```sh

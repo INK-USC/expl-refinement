@@ -129,10 +129,6 @@ class ConstituencyExplainer:
                     spacy_alignment[i][k] -= 2*j
             
             mapping.append([spacy_alignment[i][0], spacy_alignment[i][-1]])
-        
-        # print([tok for tok in doc])
-        # print(toks)
-        # print(mapping)
             
         return toks, mapping
 
@@ -166,7 +162,7 @@ class ConstituencyExplainer:
         
         return input_ids, input_mask, segment_ids, mapping, tokens
 
-    def plot_tabs(self, label, tokens, sentence_id):
+    def plot_tabs(self, label, tokens, sentence_id, show_label=False):
         width = self.tabs[0][0][1]
         height = len(self.tabs)
 
@@ -175,9 +171,8 @@ class ConstituencyExplainer:
         for i in range(height):
             for span in self.tabs[i]:
                 st, ed, score = span
-                score_array[i, st-1:ed] = score
+                score_array[i, st-1:ed] = score_array
         
-        # print(score_array)
         fig, ax = plt.subplots(figsize=(width, height))
         vmin, vmax = -5.0, 5.0
         im = ax.imshow(score_array, cmap='coolwarm', aspect=0.5, vmin=vmin, vmax=vmax)
@@ -194,7 +189,8 @@ class ConstituencyExplainer:
                     ax.text(j, i, tokens[j+1], ha='center', va='center',
                            fontsize=fontsize)
         
-        plt.title(str(label), fontsize=14)
+        if show_label:
+            plt.title(str(label), fontsize=14)
         dir_name = self.fig_dir
         if not os.path.isdir(dir_name): os.mkdir(dir_name)
         plt.savefig(dir_name + '/fig_{}.png'.format(sentence_id), bbox_inches='tight')
@@ -209,12 +205,9 @@ class ConstituencyExplainer:
             # constituency parse
             constituency = self.constituency_parser.predict(sentence=sentence)
             original_tokens = constituency['tokens']
-            # print(original_tokens)
-            # print(len(original_tokens))
             self.traverse_tree(constituency['hierplane_tree']['root'], original_tokens, 0, len(original_tokens),
                                                     input_ids, input_mask, segment_ids, label, mapping)
             
-            # print(self.tabs)
             self.plot_tabs(label, tokens, sentence_id)
         except Exception as e:
             logger.info('Met error for sentence id {}'.format(sentence_id))
@@ -224,11 +217,6 @@ class ConstituencyExplainer:
         with open(file_path) as f:
             for i, line in enumerate(tqdm(f.readlines())):
                 data = json.loads(line)
-                # sentence = data["Text"]
-                # if len(sentence) == 0:
-                #     continue
-                # label = data["hd"] or data["cv"]
-                # sentence_id = data["text_id"]
 
                 sentence = data['text']
                 if len(sentence) == 0:
